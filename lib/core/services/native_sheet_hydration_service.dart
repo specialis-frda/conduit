@@ -68,6 +68,8 @@ import 'package:conduit_core/features/push/models/push_status.dart';
 import 'package:conduit_core/features/push/providers/push_providers.dart';
 import '../../features/push/widgets/push_target_actions.dart'
     show pushTargetNeedsAttention, pushTargetTitle;
+import '../../features/notifications/services/local_notification_service.dart'
+    show localNotificationServiceProvider;
 
 import '../utils/model_icon_utils.dart';
 import '../utils/model_logos.dart';
@@ -1584,6 +1586,31 @@ class NativeSheetHydrationService {
             : NativeSheetItemKind.info,
         value: s.notificationScheduledEnabled,
       ),
+      // Reminders of the Open WebUI calendar, shown where the account can use
+      // the calendar.
+      if (_ref.read(calendarAvailableProvider))
+        NativeSheetItemConfig(
+          id: 'notification-calendar',
+          title: l10n.notificationCalendarTitle,
+          subtitle: l10n.notificationCalendarDescription,
+          sfSymbol: 'calendar',
+          kind: NativeSheetItemKind.toggle,
+          value: s.notificationCalendarEnabled,
+        ),
+      // Android delivers them on the minute only with "Alarms & reminders",
+      // which is off for new installs since Android 14. Offered, never asked.
+      if (defaultTargetPlatform == TargetPlatform.android &&
+          s.notificationCalendarEnabled &&
+          _ref.read(calendarAvailableProvider) &&
+          _ref.read(localNotificationServiceProvider).exactRemindersAllowed ==
+              false)
+        NativeSheetItemConfig(
+          id: nativeNotificationCalendarExactId,
+          title: l10n.notificationCalendarExactTitle,
+          subtitle: l10n.notificationCalendarExactDescription,
+          sfSymbol: 'clock',
+          showsDisclosure: true,
+        ),
     ];
     return [
       masterSection,
