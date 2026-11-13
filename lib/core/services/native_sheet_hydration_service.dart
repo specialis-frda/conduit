@@ -1584,6 +1584,17 @@ class NativeSheetHydrationService {
             : NativeSheetItemKind.info,
         value: s.notificationScheduledEnabled,
       ),
+      // Reminders of the Open WebUI calendar, shown where the account can use
+      // the calendar.
+      if (_ref.read(calendarAvailableProvider))
+        NativeSheetItemConfig(
+          id: 'notification-calendar',
+          title: l10n.notificationCalendarTitle,
+          subtitle: l10n.notificationCalendarDescription,
+          sfSymbol: 'calendar',
+          kind: NativeSheetItemKind.toggle,
+          value: s.notificationCalendarEnabled,
+        ),
     ];
     return [
       masterSection,
